@@ -1,0 +1,94 @@
+# The bf code for "Hello World!"
+bf_code = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
+
+# The bf code for Fibonacci
+fibonacci = "+++++++++++>+>>>>++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++<<<<<<[>[>>>>>>+>+<<<<<<<-]>>>>>>>[<<<<<<<+>>>>>>>-]<[>++++++++++[-<-[>>+>+<<<-]>>>[<<<+>>>-]+<[>[-]<[-]]>[<<[>>>+<<<-]>>[-]]<<]>>>[>>+>+<<<-]>>>[<<<+>>>-]+<[>[-]<[-]]>[<<+>>[-]]<<<<<<<]>>>>>[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]++++++++++<[->-<]>++++++++++++++++++++++++++++++++++++++++++++++++.[-]<<<<<<<<<<<<[>>>+>+<<<<-]>>>>[<<<<+>>>>-]<-[>>.>.<<<[-]]<<[>>+>+<<<-]>>>[<<<+>>>-]<<[<+>-]>[<+>-]<<<-]"
+
+import sys
+bf_adder = (",+++.") # (Input + 3)
+
+sierpinsky="++++++++[>+>++++<<-]>++>>+<[-[>>+<<-]+>>]>+[-<<<[->[+[-]+>++>>>-<<]<[<]>>++++++[<<+++++>>-]+<<++.[-]<<]>.>+[>>]>+]"
+
+def run_brainfuck(code):
+    cells = [0] * 30000
+    pointer = 0
+    code_ptr = 0
+
+    # Pre-map jumps for efficiency
+    jumps = {}
+    stack = []
+    for i, char in enumerate(code):
+        if char == "[":
+            stack.append(i)
+        elif char == "]":
+            start = stack.pop()
+            jumps[start] = i
+            jumps[i] = start
+
+    # Execution loop
+    while code_ptr < len(code):
+        char = code[code_ptr]
+        if char == ">":
+            pointer += 1
+        elif char == "<":
+            pointer -= 1
+        elif char == "+":
+            cells[pointer] = (cells[pointer] + 1) % 256
+        elif char == "-":
+            cells[pointer] = (cells[pointer] - 1) % 256
+        elif char == ".":
+            print(chr(cells[pointer]), end="")
+        elif char == ",":
+            pass  # Input not needed for Hello World
+        elif char == "[" and cells[pointer] == 0:
+            code_ptr = jumps[code_ptr]
+        elif char == "]" and cells[pointer] != 0:
+            code_ptr = jumps[code_ptr]
+        code_ptr += 1
+
+
+def run_input_brainfuck(code):
+    cells = [0] * 30000
+    ptr = 0
+    pc = 0
+
+    # Pre-process jumps for loops
+    jumps = {}
+    stack = []
+    for i, char in enumerate(code):
+        if char == "[":
+            stack.append(i)
+        elif char == "]":
+            start = stack.pop()
+            jumps[start], jumps[i] = i, start
+
+    # Execution
+    while pc < len(code):
+        cmd = code[pc]
+        if cmd == ">":
+            ptr += 1
+        elif cmd == "<":
+            ptr -= 1
+        elif cmd == "+":
+            cells[ptr] = (cells[ptr] + 1) % 256
+        elif cmd == "-":
+            cells[ptr] = (cells[ptr] - 1) % 256
+        elif cmd == ".":
+            sys.stdout.write(chr(cells[ptr]))
+            sys.stdout.flush()
+        elif cmd == ",":
+            # Windows input: reads one char at a time
+            char = sys.stdin.read(1)
+            cells[ptr] = ord(char) if char else 0
+        elif cmd == "[" and cells[ptr] == 0:
+            pc = jumps[pc]
+        elif cmd == "]" and cells[ptr] != 0:
+            pc = jumps[pc]
+        pc += 1
+
+if __name__ == "__main__":
+    run_brainfuck(bf_code)
+    run_brainfuck(fibonacci)
+    print("Add something to 3 (e.g., 4):")
+    run_input_brainfuck(bf_adder)
+    run_brainfuck(sierpinsky)
