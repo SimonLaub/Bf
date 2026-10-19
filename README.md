@@ -15,4 +15,5 @@ Add something to 3 (e.g., 4):<br>
 3<br>
 6<br>
 <br><br>
-<img src="harsh_greeting.jpg" width="400" alt="harsh greeting">
+Harsh greeting:<br>
+<img src="harsh_greeting.jpg" width="450" alt="harsh greeting">
