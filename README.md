@@ -14,3 +14,4 @@ Hello World!<br>
 Add something to 3 (e.g., 4):<br>
 3<br>
 6<br>
+<img src="harsh_greeting.jpg" width="300" alt="harsh greeting">
